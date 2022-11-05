@@ -1,0 +1,17 @@
+@base_url = http://localhost:8000
+
+POST {{base_url}}/documents
+Content-Type: application/json
+
+{
+  "title": "Teste",
+  "content": "A Segunda Guerra Ítalo-Etíope foi uma breve guerra colonial, que começou em outubro de 1935 e terminou em maio de 1936. A guerra foi travada entre as forças armadas do Reino da Itália (Regno d'Italia) e as forças armadas do Império Etíope (também conhecido como Abissínia). A guerra resultou na ocupação militar da Etiópia e na sua anexação à recém-criada colônia da África Oriental Italiana (Africa Orientale Italiana ou AOI); além disso, expôs a fraqueza da Liga das Nações como uma força de manutenção da paz. Tanto a Itália quanto a Etiópia eram países membros da organização, mas a Liga não fez nada quando a guerra claramente violou o seu Décimo Artigo da Convenção.[31]"
+}
+
+###
+
+GET {{base_url}}/documents
+
+###
+
+GET {{base_url}}/documents/1/questions
