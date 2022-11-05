@@ -54,5 +54,6 @@ async def get_questions(document_id: int, db: Session = Depends(load_session)):
         raise HTTPException(status_code=404, detail="Document not found")
 
     text = document.content
-    questions = generate_questions(text)
+    questions = generate_questions(text, 10)
+
     return questions
