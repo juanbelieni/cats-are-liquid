@@ -1,6 +1,7 @@
-import { ChakraProvider, extendTheme, ThemeConfig } from "@chakra-ui/react";
+import { ChakraProvider } from "@chakra-ui/react";
 import type { AppProps } from "next/app";
 import { Poppins } from "@next/font/google";
+import { useEffect } from "react";
 
 const font = Poppins({
   weight: ["400", "500", "700"],
@@ -8,9 +9,14 @@ const font = Poppins({
 });
 
 export default function App({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", "light");
+    document.documentElement.style.setProperty("color-scheme", "light");
+  });
+
   return (
     <div className={font.className}>
-      <ChakraProvider>
+      <ChakraProvider resetCSS>
         <Component {...pageProps} />
       </ChakraProvider>
     </div>
