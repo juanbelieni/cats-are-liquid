@@ -16,6 +16,15 @@ Uma outra proposta para essa aplicação é que ela tenha fontes recomendadas pa
 
 Além disso, para quaisquer perguntas erradas ou sem sentido que possam surgir, é permitido editar a pergunta.
 
+## Tecnologias
+
+### Front-end
+
+Para o front-end, foi utilizado o framework Next.js, junto com a biblioteca de interface Chakra UI. Nela, chamamos as rotas do back-end para montar as páginas necessárias. As páginas criadas foram:
+- Inicial, que contém todos os textos já salvos no banco de dados;
+- Novo texto, que permite a adição de um novo texto;
+- Detalhes do texto, que contém o texto selecionado e as perguntas geradas a partir dele.
+
 ## Utilização
 
 Nossa aplicação é dividida em dois módulos: back-end (localizado no diretório `api`) e front-end (localizado no diretório `web`).

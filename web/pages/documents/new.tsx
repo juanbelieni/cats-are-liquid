@@ -33,7 +33,7 @@ export default function NewDocumentPage() {
   return (
     <>
       <Head>
-        <title>Documentos | Cats are liquid!</title>
+        <title>Novo texto | Cats are liquid!</title>
       </Head>
 
       <Container p={4} maxW="container.md">
@@ -41,12 +41,12 @@ export default function NewDocumentPage() {
           <FormControl mb={4} isRequired>
             <FormLabel>Título</FormLabel>
             <Input type="text" name="title" />
-            <FormHelperText>Escreva o título do documento</FormHelperText>
+            <FormHelperText>Escreva o título</FormHelperText>
           </FormControl>
           <FormControl mb={4} isRequired>
             <FormLabel>Conteúdo</FormLabel>
             <Textarea name="content" />
-            <FormHelperText>Escreva o conteúdo do documento</FormHelperText>
+            <FormHelperText>Escreva o conteúdo</FormHelperText>
           </FormControl>
           <Button mt={4} colorScheme="teal" type="submit">
             Salvar
