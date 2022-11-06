@@ -2,20 +2,20 @@
 from fastapi import FastAPI, Depends, HTTPException
 from database import load_database, load_session
 from nlp import generate_questions
-from models.document import DocumentModel
+from models import DocumentModel, QuestionModel
 from pydantic import BaseModel
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-# allow all cors
-@app.middleware("http")
-async def add_cors_headers(request, call_next):
-    response = await call_next(request)
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-    return response
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.on_event("startup")
 async def startup_event():
@@ -25,12 +25,13 @@ class CreateDocumentModel(BaseModel):
     title: str
     content: str
 
-@app.post("/documents")
+@app.post("/documents", status_code=201)
 async def create_document(document: CreateDocumentModel = None, db: Session = Depends(load_session)):
     document = DocumentModel(title=document.title, content=document.content)
     db.add(document)
     db.commit()
-    return document
+
+    return {"id": document.id}
 
 
 @app.get("/documents")
@@ -39,7 +40,9 @@ async def get_documents(db: Session = Depends(load_session)):
 
 @app.get("/documents/{document_id}")
 async def get_document(document_id: int, db: Session = Depends(load_session)):
-    document = db.query(DocumentModel).filter(DocumentModel.id == document_id).first()
+    document = db.query(DocumentModel).filter(DocumentModel.id == document_id).options(
+        joinedload(DocumentModel.questions)
+    ).first()
 
     if not document:
         raise HTTPException(status_code=404, detail="Document not found")
@@ -57,3 +60,19 @@ async def get_questions(document_id: int, db: Session = Depends(load_session)):
     questions = generate_questions(text, 10)
 
     return questions
+
+class CreateQuestionModel(BaseModel):
+    text: str
+
+@app.post("/documents/{document_id}/questions", status_code=201)
+async def create_question(document_id: int, question: CreateQuestionModel, db: Session = Depends(load_session)):
+    document = db.query(DocumentModel).get(document_id)
+
+    if document is None:
+        raise HTTPException(status_code=404, detail="Document not found")
+
+    question = QuestionModel(text=question.text, document_id=document_id)
+    db.add(question)
+    db.commit()
+
+    return {"id": question.id}

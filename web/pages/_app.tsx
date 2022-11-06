@@ -1,10 +1,10 @@
-// import '../styles/globals.css'
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, extendTheme, ThemeConfig } from "@chakra-ui/react";
 import type { AppProps } from "next/app";
-import { Roboto } from "@next/font/google";
+import { Poppins } from "@next/font/google";
 
-const font = Roboto({
+const font = Poppins({
   weight: ["400", "500", "700"],
+  subsets: ["latin"],
 });
 
 export default function App({ Component, pageProps }: AppProps) {
