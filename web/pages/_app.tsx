@@ -12,12 +12,15 @@ export default function App({ Component, pageProps }: AppProps) {
     <div className={font.className}>
 
       <ChakraProvider>
-        <Component {...pageProps} />
+
         <Box
-              backgroundImage="/backgroud.png"
-              backgroundPosition="center"
-              backgroundRepeat="no-repeat"
-        />
+        backgroundImage="/backgroud.png"
+        backgroundPosition="center"
+        backgroundRepeat="no-repeat"
+        >
+              <Component {...pageProps} />
+
+        </Box>
 
       </ChakraProvider>
 

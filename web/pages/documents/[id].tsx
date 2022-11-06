@@ -86,7 +86,7 @@ export default function DocumentPage({ document }: IDocumentPageProps) {
 
         <Box
           mb={8}
-          bg="gray.100"
+          bg="#cccccc40"
           px={6}
           py={4}
           borderRadius="md"
