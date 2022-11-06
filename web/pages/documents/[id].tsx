@@ -86,7 +86,7 @@ export default function DocumentPage({ document }: IDocumentPageProps) {
 
         <Box
           mb={8}
-          bg="#cccccc40"
+          bg="gray.100"
           px={6}
           py={4}
           borderRadius="md"
@@ -95,8 +95,6 @@ export default function DocumentPage({ document }: IDocumentPageProps) {
         >
           <Text>{document.content}</Text>
         </Box>
-
-
 
         <Box px={2}>
           <Flex justifyContent="space-between" alignItems="center" mb={4}>

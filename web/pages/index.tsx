@@ -25,16 +25,21 @@ export default function DocumentPage({ documents }: IDocumentPageProps) {
       </Head>
 
       <Container p={4} maxW="container.md">
-        <Text fontSize="2xl" mb={4}>
-          Textos
-        </Text>
+        <Flex mb={4} justifyContent="space-between" alignItems="center">
+          <Text fontSize="2xl">Textos</Text>
+          <Link href="/documents/new">
+            <Button colorScheme="teal">
+              Novo texto
+            </Button>
+          </Link>
+        </Flex>
 
         <Flex direction="column" mb={4} alignItems="stretch">
           {documents.map((document) => (
             <Link href={`/documents/${document.id}`} key={document.id}>
               <Box
-                mb={2}
                 bg="gray.100"
+                mb={2}
                 px={6}
                 py={4}
                 borderRadius="md"
