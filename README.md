@@ -18,6 +18,8 @@ Além disso, para quaisquer perguntas erradas ou sem sentido que possam surgir, 
 
 ## Tecnologias
 
+Para o back-end foi utilizada a biblioteca `spacy`, utilizando o bosque [ `UD Portuguese Bosque v2.8` ] que possui um tagueamento de entidades que foi muito útil na geração de perguntas, a class `matcher` ajudou a taguear datas para perguntas com critério temporal.
+
 ### Front-end
 
 Para o front-end, foi utilizado o framework Next.js, junto com a biblioteca de interface Chakra UI. Nela, chamamos as rotas do back-end para montar as páginas necessárias. As páginas criadas foram:
