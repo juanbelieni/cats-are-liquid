@@ -85,6 +85,8 @@ export default function DocumentPage({ document }: IDocumentPageProps) {
           <Text>{document.content}</Text>
         </Box>
 
+
+
         <Box px={2}>
           <Flex justifyContent="space-between" alignItems="center" mb={4}>
             <Text fontSize="2xl">Perguntas geradas</Text>
