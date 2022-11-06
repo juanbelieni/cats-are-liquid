@@ -21,9 +21,18 @@ Além disso, para quaisquer perguntas erradas ou sem sentido que possam surgir, 
 ### Front-end
 
 Para o front-end, foi utilizado o framework Next.js, junto com a biblioteca de interface Chakra UI. Nela, chamamos as rotas do back-end para montar as páginas necessárias. As páginas criadas foram:
+
 - Inicial, que contém todos os textos já salvos no banco de dados;
-- Novo texto, que permite a adição de um novo texto;
+
+![Página inicial](/images/page-1.png)
+
+- Adicionar texto, que permite a adição de um novo texto;
+
+![Página de adição de texto](/images/page-2.png)
+
 - Detalhes do texto, que contém o texto selecionado e as perguntas geradas a partir dele.
+
+![Página de detalhes do texto](/images/page-3.png)
 
 ## Utilização
 
@@ -41,4 +50,3 @@ No diretório `web`, execute o comando `npm install` para instalar as dependênc
 ## Licença
 
 [MIT](/LICENSE)
-
