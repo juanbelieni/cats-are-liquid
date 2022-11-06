@@ -1,6 +1,6 @@
 # 🐱 Cats are liquid!
 
-![Cats are liquid!](http://i.imgur.com/tAUw0vQ.jpg)
+![Cats are liquid!](https://i.imgur.com/jLuPWwM.gif)
 
 De fato, gatos são líquidos. Isto posto, nossa aplicação tem como objetivo gerar perguntas a partir de um texto qualquer. Essa funcionalidade tem como meta auxiliar professores e alunos alcançarem um melhor nível de compreensão do conteúdo estudado.
 
