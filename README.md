@@ -1,4 +1,4 @@
-# Cats are liquid!
+# 🐱 Cats are liquid!
 
 ![Cats are liquid!](http://i.imgur.com/tAUw0vQ.jpg)
 
