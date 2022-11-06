@@ -8,8 +8,28 @@ import {
   Button,
   Container,
 } from "@chakra-ui/react";
+import { api } from "../../config/api";
+import { useRouter } from "next/router";
 
 export default function NewDocumentPage() {
+  const router = useRouter();
+
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.target as HTMLFormElement);
+    const data = Object.fromEntries(formData);
+
+    console.log(data);
+
+    const response = await api.post("/documents", data);
+
+    if (response.status === 201) {
+      console.log(response.data);
+      const document = response.data;
+      router.push(`/documents/${document.id}`);
+    }
+  }
+
   return (
     <>
       <Head>
@@ -17,15 +37,15 @@ export default function NewDocumentPage() {
       </Head>
 
       <Container p={4} maxW="container.md">
-        <form>
-          <FormControl id="title" mb={4} isRequired>
+        <form onSubmit={onSubmit}>
+          <FormControl mb={4} isRequired>
             <FormLabel>Título</FormLabel>
-            <Input type="text" />
+            <Input type="text" name="title" />
             <FormHelperText>Escreva o título do documento</FormHelperText>
           </FormControl>
-          <FormControl id="content" mb={4} isRequired>
+          <FormControl mb={4} isRequired>
             <FormLabel>Conteúdo</FormLabel>
-            <Textarea />
+            <Textarea name="content" />
             <FormHelperText>Escreva o conteúdo do documento</FormHelperText>
           </FormControl>
           <Button mt={4} colorScheme="teal" type="submit">

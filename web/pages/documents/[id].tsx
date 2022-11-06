@@ -1,4 +1,3 @@
-import { useRouter } from "next/router";
 import {
   Input,
   Button,
@@ -7,10 +6,18 @@ import {
   Box,
   Flex,
   IconButton,
+  keyframes,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverHeader,
+  PopoverBody,
 } from "@chakra-ui/react";
 import Head from "next/head";
 import { api } from "../../config/api";
-import { FiSave, FiEdit } from "react-icons/fi";
+import { FiSave, FiLoader, FiAlertTriangle } from "react-icons/fi";
 import { GetStaticPaths, GetStaticProps } from "next";
 import { IDocumentModel } from "../../models/document";
 import { useState } from "react";
@@ -19,47 +26,51 @@ interface IDocumentPageProps {
   document: IDocumentModel;
 }
 
-enum EQuestionStatus {
-  editing = "editing",
-  saved = "saved",
-}
-
-interface IQuestion {
-  id: number;
-  text: string;
-  status: EQuestionStatus;
-}
+const spin = keyframes`
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+`;
 
 export default function DocumentPage({ document }: IDocumentPageProps) {
-  const [questions, setQuestions] = useState<IQuestion[]>([]);
-
-  const questionsBeingEdited = questions.filter(
-    (question) => question.status === EQuestionStatus.editing
+  const [generated, setGenerated] = useState<{ id: number; text: string }[]>(
+    []
   );
 
-  const savedQuestions = questions.filter(
-    (question) => question.status === EQuestionStatus.saved
+  const [saving, setSaving] = useState<Number[]>([]);
+  const [failed, setFailed] = useState<Number[]>([]);
+  const [saved, setSaved] = useState<String[]>(
+    document.questions?.map((q) => q.text).reverse() || []
   );
 
   async function onGenerateQuestions() {
     const response = await api.get(`/documents/${document.id}/questions`);
-    setQuestions(
-      response.data.map((text: string, i: number) => ({
-        id: i,
-        text,
-        status: EQuestionStatus.editing,
-      }))
+    setGenerated(
+      response.data.map((text: string) => {
+        return {
+          id: Math.random(),
+          text,
+        };
+      })
     );
   }
 
-  async function onSaveQuestion(id: number) {
-    setQuestions(
-      questions.map((question) =>
-        question.id === id
-          ? { ...question, status: EQuestionStatus.saved }
-          : question
-      )
-    );
+  async function onSaveQuestion(id: Number) {
+    setSaving([...saving, id]);
+
+    try {
+      const text = generated.find((q) => q.id === id)!.text;
+
+      await api.post(`/documents/${document.id}/questions`, {
+        text: text,
+      });
+
+      setGenerated(generated.filter((question) => question.id !== id));
+      setSaved([text, ...saved]);
+    } catch (error) {
+      setFailed([...failed, id]);
+    } finally {
+      setSaving(saving.filter((questionId) => questionId !== id));
+    }
   }
 
   return (
@@ -95,41 +106,132 @@ export default function DocumentPage({ document }: IDocumentPageProps) {
             </Button>
           </Flex>
 
-          {questions.length == 0 ? (
+          {generated.length == 0 ? (
             <Text color="gray.500" fontSize="lg" textAlign="center">
               Nenhuma questão encontrada
             </Text>
           ) : (
-            questionsBeingEdited.map((question) => (
-              <Box
-                key={question.id}
-                bg="gray.100"
-                px={4}
-                py={2}
-                mb={2}
-                borderRadius="md"
-              >
-                <Flex>
-                  <Input
-                    defaultValue={question.text}
-                    size="sm"
-                    variant="flushed"
-                    borderColor="transparent"
-                    focusBorderColor="teal.500"
-                  />
+            generated.map((question, index) => {
+              const isSaving = saving.includes(index);
+              const hasError = failed.includes(index);
 
-                  <IconButton
-                    ml={4}
-                    size="sm"
-                    colorScheme="teal"
-                    variant="ghost"
-                    aria-label="Editar pergunta"
-                    icon={<FiSave />}
-                    onClick={() => onSaveQuestion(question.id)}
-                  />
-                </Flex>
-              </Box>
-            ))
+              return (
+                <Box
+                  key={index}
+                  bg="gray.100"
+                  px={4}
+                  py={2}
+                  mb={2}
+                  borderRadius="md"
+                >
+                  <Flex>
+                    <Input
+                      value={question.text}
+                      onChange={(event) => {
+                        setGenerated(
+                          generated.map((q) => {
+                            if (q.id === question.id) {
+                              return {
+                                ...q,
+                                text: event.target.value,
+                              };
+                            }
+
+                            return q;
+                          })
+                        );
+                      }}
+                      defaultValue={question.text}
+                      size="sm"
+                      variant="flushed"
+                      borderColor="transparent"
+                      focusBorderColor="teal.500"
+                    />
+
+                    {!hasError ? (
+                      <IconButton
+                        ml={4}
+                        size="sm"
+                        colorScheme="teal"
+                        variant="ghost"
+                        aria-label="Editar pergunta"
+                        icon={
+                          isSaving ? (
+                            <Box
+                              as={FiLoader}
+                              animation={`${spin} infinite 20s linear`}
+                            />
+                          ) : (
+                            <FiSave />
+                          )
+                        }
+                        onClick={
+                          !isSaving
+                            ? () => onSaveQuestion(question.id)
+                            : undefined
+                        }
+                      />
+                    ) : (
+                      <Popover
+                        onClose={() =>
+                          setFailed(
+                            failed.filter((questionId) => questionId !== index)
+                          )
+                        }
+                      >
+                        <PopoverTrigger>
+                          <IconButton
+                            ml={4}
+                            size="sm"
+                            colorScheme="red"
+                            variant="ghost"
+                            aria-label="Erro ao salvar pergunta"
+                            icon={<FiAlertTriangle />}
+                          />
+                        </PopoverTrigger>
+                        <PopoverContent>
+                          <PopoverArrow />
+                          <PopoverCloseButton />
+                          <PopoverHeader>Erro ao salvar pergunta</PopoverHeader>
+
+                          <PopoverBody>
+                            <Text fontSize="sm">
+                              Ocorreu um erro ao salvar a pergunta. Tente
+                              novamente mais tarde.
+                            </Text>
+                          </PopoverBody>
+                        </PopoverContent>
+                      </Popover>
+                    )}
+                  </Flex>
+                </Box>
+              );
+            })
+          )}
+
+          <Text fontSize="2xl" mt={8} mb={4}>
+            Perguntas salvas
+          </Text>
+
+          {saved.length == 0 ? (
+            <Text color="gray.500" fontSize="lg" textAlign="center">
+              Nenhuma questão encontrada
+            </Text>
+          ) : (
+            saved.map((question, index) => {
+              return (
+                <Box
+                  key={index}
+                  bg="gray.100"
+                  px={4}
+                  py={2}
+                  mb={2}
+                  borderRadius="md"
+                >
+                  <Text>{question}</Text>
+                </Box>
+              );
+            })
           )}
         </Box>
       </Container>
@@ -157,9 +259,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
     id: response.data.id,
     title: response.data.title,
     content: response.data.content,
+    questions: response.data.questions,
   };
-
-  console.log(document);
 
   return {
     props: { document },

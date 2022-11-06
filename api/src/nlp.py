@@ -114,11 +114,12 @@ def generate_questions(text, n):
     doc = nlp(text)
 
     questions = set()
-    entities = set((ent.text, ent[0].morph, ent.label_) for ent in doc.ents)
 
     questions.update(generate_relation_questions(doc, n))
     questions.update(generate_who_questions(doc, n))
     questions.update(generate_date_questions(doc, n))
+
+    entities = set((ent.text, ent[0].morph, ent.label_) for ent in doc.ents if ent.label_ != "PER")
 
     for text, morph, label in entities:
         feminine, plural = get_token_morph(morph)
@@ -130,54 +131,7 @@ def generate_questions(text, n):
         else:
             questions.add(f"O que foi {det} {text}?")
 
-    # if label == "PER":
-    #     if plural:
-    #         questions.append(f"Quem foram {text}?")
-    #     else:
-    #         questions.append(f"Quem foi {text}?")
-    # else:
-    #     if plural:
-    #         questions.append(f"Explique o que foram {det} {text}?")
-    #         for text2, morph2, label2 in entities:
-    #             gender2 = morph2.get("Gender")
-    #             number2 = morph2.get("Number")
+    if len(questions) > n:
+        return random.sample(questions, n)
 
-    #             feminine2 = gender2[0] == "Fem" if len(gender2) == 1 else False
-    #             plural2 = number2[0] == "Plur" if len(number2) == 1 else False
-
-    #             if plural2:
-    #                 det2 = "as" if feminine2 else "os"
-    #             else:
-    #                 det2 = "a" if feminine2 else "o"
-    #             if text != text2:
-    #                 questions.append(
-    #                     f"Qual a relação entre {det} {text} e {det2} {text2}"
-    #                 )
-    #     else:
-    #         questions.append(f"Explique o que foi {det} {text}?")
-    #         for text2, morph2, label2 in entities:
-    #             gender2 = morph2.get("Gender")
-    #             number2 = morph2.get("Number")
-
-    #             feminine2 = gender2[0] == "Fem" if len(gender2) == 1 else False
-    #             plural2 = number2[0] == "Plur" if len(number2) == 1 else False
-
-    #             if plural2:
-    #                 det2 = "as" if feminine2 else "os"
-    #             else:
-    #                 det2 = "a" if feminine2 else "o"
-    #             if text != text2:
-    #                 questions.append(
-    #                     f"Qual a relação entre {det} {text} e {det2} {text2}"
-    #                 )
-
-    return random.sample(questions, n)
-
-    # questions_temp = random.sample(questions, 15)
-
-    # for i in range(0, len(questions_temp)):
-    #     questions.append(questions_temp[i])
-
-    # selected_questions = random.sample(questions, number_questions)
-
-    # return selected_questions
+    return questions
