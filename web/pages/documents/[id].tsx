@@ -55,7 +55,9 @@ export default function DocumentPage({ document }: IDocumentPageProps) {
   async function onSaveQuestion(id: number) {
     setQuestions(
       questions.map((question) =>
-        question.id === id ? { ...question, status: EQuestionStatus.saved } : question
+        question.id === id
+          ? { ...question, status: EQuestionStatus.saved }
+          : question
       )
     );
   }
@@ -67,11 +69,19 @@ export default function DocumentPage({ document }: IDocumentPageProps) {
       </Head>
 
       <Container p={4} maxW="container.md">
-        <Box mb={8} bg="gray.100" px={6} py={4} borderRadius="md">
-          <Text fontSize="2xl" mb={4}>
-            {document.title}
-          </Text>
+        <Text fontSize="2xl" mb={4}>
+          {document.title}
+        </Text>
 
+        <Box
+          mb={8}
+          bg="gray.100"
+          px={6}
+          py={4}
+          borderRadius="md"
+          maxH="lg"
+          overflowY="auto"
+        >
           <Text>{document.content}</Text>
         </Box>
 
